@@ -1,6 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.db import IntegrityError
 from .models import User
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 def index(request):
@@ -16,3 +20,15 @@ def index(request):
     return render(request, "bank/index.html", {
         "test": test
     })
+
+@csrf_exempt
+def register(request):
+    if request.method == "POST":
+        print(request.POST) 
+        username = request.POST["username"]
+        email = request.POST["email"]
+        print(f"SOY EMAIL --- >>> {email}")
+        print(f"SOY USERNAME --- >>> {username}")
+        
+    else:
+        return render(request, "auctions/register.html")
