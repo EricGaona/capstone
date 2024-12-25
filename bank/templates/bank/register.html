@@ -1,0 +1,42 @@
+{% extends "bank/layout.html" %}
+
+{% block body %}
+    <div>
+        <h2>Register</h2>
+        {% if message %}
+            <div>{{ message }}</div>
+        {% endif %}
+
+        <form action="{% url 'register' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input class="form-control" autofocus type="text"  id="userName" name="userName" placeholder="UserName" required><br>
+            </div>
+            <div class="form-group">
+                <input class="form-control" autofocus type="text"  id="firstName" name="firstName" placeholder="First Name" required><br>
+            </div>
+            <div class="form-group">
+                <input class="form-control" autofocus type="text" id="lastName" name="lastName" placeholder="Last Name" required><br>
+            </div>
+            <div class="form-group">
+                <input class="form-control" autofocus type="email" id="email" name="email" placeholder="Email" required><br>
+            </div>
+            <div class="form-group">
+                <input class="form-control" autofocus type="text" id="phoneNumber" name="phoneNumber" placeholder="Phone Number" required><br>
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" autofocus id="address" name="address" placeholder="Address" required></textarea><br>
+            </div>
+            <div class="form-group">
+                <input class="form-control" autofocus type="password" id="password" name="password" placeholder="Password" required><br>
+            </div>
+            <div class="form-group">
+                <input class="form-control" autofocus type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required><br>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Register">
+        </form>
+        Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+    </div>
+    
+
+{% endblock %}
