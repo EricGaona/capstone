@@ -9,6 +9,7 @@ class User(AbstractUser):
     address = models.TextField(null=True, blank=True)
     account_number = models.CharField(max_length=50, unique=True, null=True)
     state = models.CharField(max_length=50, default="active")
+    cash = models.FloatField(default=0.0)
 
 
 

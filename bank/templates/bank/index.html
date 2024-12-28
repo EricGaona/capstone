@@ -1,5 +1,15 @@
 {% extends "bank/layout.html" %} 
+{% load static %}
 {% block title %}Index{%endblock%} 
 {% block body %}
-    <h1>Hello, {{ test }}</h1>
+<img src="{% static 'bank/images/autumn-1.jpg' %}" alt="bank" class="img-fluid">
+{% if user.is_authenticated %}
+    
+    <h4>Hello, <b>{{ user_name }}</b>. Yor account number is <b>{{ account_number }}</b></h4>
+    {% else %} 
+    <h4>Welcome to CSB</h4>
+    <p>CSB is a bank that provides a platform for you to manage your account.</p>  
+    <p>Register to create an account or login to access your account.</p>
+    <p>Click <a href="{% url 'register' %}">here</a> to register or <a href="{% url 'login' %}">here</a> to login.</p>  
+{% endif %}
 {% endblock %}

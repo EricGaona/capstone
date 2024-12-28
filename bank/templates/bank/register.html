@@ -1,42 +1,46 @@
 {% extends "bank/layout.html" %}
-
+{% load static %}
 {% block body %}
     <div>
         <h2>Register</h2>
-        {% if message %}
+        <!-- {% if message %}
             <div>{{ message }}</div>
-        {% endif %}
+        {% endif %} -->
 
-        <form action="{% url 'register' %}" method="post">
+        <form id="registerForm" action="{% url 'register' %}" method="post">
             {% csrf_token %}
-            <div class="form-group">
-                <input class="form-control" autofocus type="text"  id="userName" name="userName" placeholder="UserName" required><br>
-            </div>
+            <div id="message"></div>
+            <!-- <div class="form-group">
+                <input class="form-control" autofocus type="text"  id="userName" name="userName" placeholder="UserName" required ><br>
+            </div> -->
             <div class="form-group">
                 <input class="form-control" autofocus type="text"  id="firstName" name="firstName" placeholder="First Name" required><br>
             </div>
             <div class="form-group">
-                <input class="form-control" autofocus type="text" id="lastName" name="lastName" placeholder="Last Name" required><br>
+                <input class="form-control" autofocus type="text" id="lastName" name="lastName" placeholder="Last Name" ><br>
             </div>
             <div class="form-group">
-                <input class="form-control" autofocus type="email" id="email" name="email" placeholder="Email" required><br>
+                <input class="form-control" autofocus type="email" id="email" name="email" placeholder="Email" ><br>
             </div>
             <div class="form-group">
-                <input class="form-control" autofocus type="text" id="phoneNumber" name="phoneNumber" placeholder="Phone Number" required><br>
+                <input class="form-control" autofocus type="text" id="phoneNumber" name="phoneNumber" placeholder="Phone Number" ><br>
             </div>
             <div class="form-group">
-                <textarea class="form-control" autofocus id="address" name="address" placeholder="Address" required></textarea><br>
+                <textarea class="form-control" autofocus id="address" name="address" placeholder="Address" ></textarea><br>
             </div>
             <div class="form-group">
-                <input class="form-control" autofocus type="password" id="password" name="password" placeholder="Password" required><br>
+                <input class="form-control" autofocus type="password" id="password" name="password" placeholder="Password" ><br>
             </div>
             <div class="form-group">
-                <input class="form-control" autofocus type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required><br>
+                <input class="form-control" autofocus type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" ><br>
             </div>
-            <input class="btn btn-primary" type="submit" value="Register">
+            <!-- <input class="btn btn-primary" type="submit" value="Register"> -->
+            <button class="btn btn-primary" type="submit">Register</button>
         </form>
         Already have an account? <a href="{% url 'login' %}">Log In here.</a>
     </div>
     
-
+{% endblock %}
+{% block script %}
+<script src="{% static 'bank/formValidation.js' %}"></script>
 {% endblock %}
