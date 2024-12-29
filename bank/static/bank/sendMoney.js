@@ -1,8 +1,7 @@
-console.log("Hello, World 6!!!");
-
 document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("registerForm");
+    const form = document.getElementById("sendMoneyForm");
     const messageDiv = document.getElementById("message");
+    console.log("all good here")
 
     form.addEventListener("submit", async (event) => {
         event.preventDefault(); // Prevent the default form submission
@@ -10,17 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // Get form data
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
-
+        console.log("all good here too")
         // Client-side validation
-        if (!data.firstName || !data.lastName || !data.email || !data.phoneNumber || !data.address || !data.password || !data.confirmPassword) {
-            messageDiv.innerHTML = "<p style='color: red;'>All fields are required.</p>";
-            return;
-        }
+        if (!data.senderAccountNumber || !data.recipientEmail || !data.amount) {
+            messageDiv.innerHTML = "<p style='color: red;'>All fields are required from JS</p>";
 
-        if (data.password !== data.confirmPassword) {
-            messageDiv.innerHTML = "<p style='color: red;'>Passwords do not match.</p>";
             return;
         }
+        console.log(typeof (data.amount));
 
         // Send data to the server using fetch
         try {
@@ -36,17 +32,21 @@ document.addEventListener("DOMContentLoaded", () => {
             const result = await response.json();
 
             if (response.ok) {
-                // messageDiv.innerHTML = `<p style='color: green;'>${result.message} Your account number is: ${result.accountNumber}</p>`;
+                messageDiv.innerHTML = `<p style='color: green;'>${result.message}</p>`;
+                form.reset(); // Clear the form after successful submission
 
-                // Redirect to index.html after successful registration
-                    window.location.href = "http://127.0.0.1:8000";
-                    await new Promise(r => setTimeout(r, 1000));
-                    form.reset(); // Clear the form after successful submission
+                setTimeout(() => {
+                    messageDiv.innerHTML = " ";
+
+                }, 3000); // Redirect after 2 seconds
+                // Optionally redirect or perform other actions here if needed
             } else {
                 messageDiv.innerHTML = `<p style='color: red;'>${result.error}</p>`;
+                //    messageDiv.innerHTML = `<p style='color: red;'>The email <b>${data.recipientEmail}</b> does not exist or it is your own email.</p>`;
             }
         } catch (error) {
-            console.error("Error:", error);
+            console.log("entro aqui");
+
             messageDiv.innerHTML = "<p style='color: red;'>An unexpected error occurred.</p>";
         }
     });

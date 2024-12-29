@@ -142,30 +142,93 @@ def profile(request, username):
 # def custom_404_view(request, exception):
 #     logger.debug("Custom 404 view triggered")
 #     return render(request, "bank/404.html", status=404)
+
+
+
 @csrf_exempt
 def send_money(request):
-    # Datos del usuario logueado
-    user = request.user
-    user_name = user.first_name
-    print(f"SOY user_name >>> {user_name}")
-
     if request.method == "POST":
-        data = json.loads(request.body)
-        # Datos del usuario que viene por POST
-        print(f"SOY DATA >>> {data}")
-        id_user = data.get("id_user")
-        print(f"SOY ID_USER >>> {id_user}")
-        amount = data.get("amount")
-        print(f"SOY AMOUNT >>> {amount}")
-        print(" ----- 1 -------------- ")
+        try:
+            data = json.loads(request.body)
 
-        user = User.objects.get(id=id_user)
-        print(f"SOY USER cash >>> {user.cash}")
-        print(f"Soy UserName >>> {user.first_name}")
-        print(f"Soy >>> {user}")
+            sender_account_number = data.get("senderAccountNumber")
+            # recipient_account_number = data.get("recipientAccountNumber")
 
-        return JsonResponse({"message": "Send money view."}, status=200)
+            recipient_email = data.get("recipientEmail")
+            user = User.objects.get(email=recipient_email)
+            recipient_account_number = user.account_number
+
+            amount = data.get("amount")
+            amount = float(amount)
+            print(f"Soy >- >- >{type(amount)}")
+
+            if amount <= 0:
+                return JsonResponse({"error": "Amount must be greater than zero."}, status=400)
+            
+            
+
+            # Validate required fields
+            if not all([sender_account_number, recipient_account_number, amount]):
+                return JsonResponse({"error": "All fields are required form Python"}, status=400)
+
+            try:
+                sender = User.objects.get(account_number=sender_account_number)
+                recipient = User.objects.get(account_number=recipient_account_number)
+
+                if sender == recipient:
+                    message = f"The email <b>{recipient_email}</b> is your own email."
+                    return JsonResponse({"error": str(message)}, status=500)
+                    # return JsonResponse({"error": "Wrong email."}, status=500)
+                
+            except User.DoesNotExist:
+                return JsonResponse({"error": "One or both account numbers are invalid."}, status=400)
+
+            if sender.balance < amount:
+                return JsonResponse({"error": "Insufficient funds."}, status=400)
+
+            # Perform the money transfer
+            sender.balance -= amount
+            recipient.balance += amount
+            sender.save()
+            recipient.save()
+
+            return JsonResponse({"message": "Money sent successfully!"}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data."}, status=400)
+        except Exception as e:
+            message = f"The email <b>{recipient_email}</b> does not exist on the database."
+            return JsonResponse({"error": str(message)}, status=500)
+            # return JsonResponse({"error": str(e)}, status=500)
     else:
-    
-        return JsonResponse({"message": "Error method."}, status=500)
+        return JsonResponse({"error": "Invalid request method."}, status=405)
 
+
+    
+    # Datos del usuario logueado
+    # user = request.user
+    # user_name = user.first_name
+    # print(f"SOY user_name >>> {user_name}")
+    # print(f"Soy User ID >>> {user.id}")
+
+    # if request.method == "POST":
+    #     # Datos del usuario que viene por POST
+    #     data = json.loads(request.body)        
+    #     print(f"SOY DATA >>> {data}")
+
+    #     id_user = data.get("id_user")
+    #     print(f"SOY ID_USER >>> {id_user}")
+
+    #     amount = data.get("amount")
+    #     print(f"SOY AMOUNT >>> {amount}")
+    #     print(" ----- 1 -------------- ")
+
+    #     user = User.objects.get(id=id_user)
+    #     print(f"SOY USER balance >>> {user.balance}")
+    #     print(f"Soy UserName >>> {user.first_name}")
+    #     print(f"Soy >>> {user}")
+    #     print(f"Soy >>> {user.id}")
+
+    #     return JsonResponse({"message": "Send money view."}, status=200)
+    # else:
+    
+    #     return JsonResponse({"message": "Error method."}, status=500)
