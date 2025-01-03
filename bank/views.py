@@ -1,3 +1,4 @@
+import os
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -12,12 +13,10 @@ import json
 import random
 from django.core.paginator import Paginator
 import requests
+from dotenv import load_dotenv, dotenv_values
 
-VONAGE_API_KEY = "3a8dbf5a"
-VONAGE_API_SECRET = "XooZ49gxQQd5usoH"
-
-# import logging
-# logger = logging.getLogger(__name__)
+VONAGE_API_KEY = os.getenv('VONAGE_API_KEY') 
+VONAGE_API_SECRET = os.getenv('VONAGE_API_SECRET')
 
 # Create your views here.
 
@@ -146,74 +145,67 @@ def profile(request, username):
     })
 
 
-# def custom_404_view(request, exception):
-#     logger.debug("Custom 404 view triggered")
-#     return render(request, "bank/404.html", status=404)
-
-
-    # requests.get("https://api.nexmo.com/verify/json?&api_key=3a8dbf5a&api_secret=XooZ49gxQQd5usoH&number=353852031759&brand=AcmeInc")
-    
 # @csrf_exempt
 # def send_money(request):
 
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
+#     if request.method == "POST":
+#         try:
+#             data = json.loads(request.body)
 
-            sender_account_number = data.get("senderAccountNumber")
-            # recipient_account_number = data.get("recipientAccountNumber")
+#             sender_account_number = data.get("senderAccountNumber")
+#             # recipient_account_number = data.get("recipientAccountNumber")
 
-            recipient_email = data.get("recipientEmail")
-            recipient_email = recipient_email.lower()
-            user = User.objects.get(email=recipient_email)
-            recipient_account_number = user.account_number
+#             recipient_email = data.get("recipientEmail")
+#             recipient_email = recipient_email.lower()
+#             user = User.objects.get(email=recipient_email)
+#             recipient_account_number = user.account_number
 
-            amount = data.get("amount")
-            amount = float(amount)
-            print(f"Soy >- >- >{type(amount)}")
+#             amount = data.get("amount")
+#             amount = float(amount)
+#             print(f"Soy >- >- >{type(amount)}")
 
-            if amount <= 0:
-                return JsonResponse({"error": "Amount must be greater than zero."}, status=400)
+#             if amount <= 0:
+#                 return JsonResponse({"error": "Amount must be greater than zero."}, status=400)
             
             
-            # Validate required fields
-            if not all([sender_account_number, recipient_account_number, amount]):
-                return JsonResponse({"error": "All fields are required form Python"}, status=400)
+#             # Validate required fields
+#             if not all([sender_account_number, recipient_account_number, amount]):
+#                 return JsonResponse({"error": "All fields are required form Python"}, status=400)
 
-            try:
-                sender = User.objects.get(account_number=sender_account_number)
-                recipient = User.objects.get(account_number=recipient_account_number)
+#             try:
+#                 sender = User.objects.get(account_number=sender_account_number)
+#                 recipient = User.objects.get(account_number=recipient_account_number)
 
-                if sender == recipient:
-                    message = f"The email <b>{recipient_email}</b> is your own email."
-                    return JsonResponse({"error": str(message)}, status=500)
-                    # return JsonResponse({"error": "Wrong email."}, status=500)
+#                 if sender == recipient:
+#                     message = f"The email <b>{recipient_email}</b> is your own email."
+#                     return JsonResponse({"error": str(message)}, status=500)
+#                     # return JsonResponse({"error": "Wrong email."}, status=500)
                 
-            except User.DoesNotExist:
-                return JsonResponse({"error": "One or both account numbers are invalid."}, status=400)
+#             except User.DoesNotExist:
+#                 return JsonResponse({"error": "One or both account numbers are invalid."}, status=400)
 
-            if sender.balance < amount:
-                return JsonResponse({"error": "Insufficient funds."}, status=400)
+#             if sender.balance < amount:
+#                 return JsonResponse({"error": "Insufficient funds."}, status=400)
 
-            # Perform the money transfer
-            sender.balance -= amount
-            recipient.balance += amount
+#             # Perform the money transfer
+#             sender.balance -= amount
+#             recipient.balance += amount
 
 
-            sender.save()
-            recipient.save()
+#             sender.save()
+#             recipient.save()
 
-            return JsonResponse({"message": "Money sent successfully!"}, status=200)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data."}, status=400)
-        except Exception as e:
-            message = f"The email <b>{recipient_email}</b> does not exist on the database."
-            return JsonResponse({"error": str(message)}, status=500)
-            # return JsonResponse({"error": str(e)}, status=500)
-    else:
-        return JsonResponse({"error": "Invalid request method."}, status=405)
+#             return JsonResponse({"message": "Money sent successfully!"}, status=200)
+#         except json.JSONDecodeError:
+#             return JsonResponse({"error": "Invalid JSON data."}, status=400)
+#         except Exception as e:
+#             message = f"The email <b>{recipient_email}</b> does not exist on the database."
+#             return JsonResponse({"error": str(message)}, status=500)
+#             # return JsonResponse({"error": str(e)}, status=500)
+#     else:
+#         return JsonResponse({"error": "Invalid request method."}, status=405)
 
-# CancelTheReques >>>  https://api.nexmo.com/verify/control/json?api_key=3a8dbf5a&api_secret=XooZ49gxQQd5usoH&request_id=173439fe69a94f49a40409a6d36dec8b&cmd=cancel
+
 
 @csrf_exempt
 def send_money(request):
@@ -222,9 +214,13 @@ def send_money(request):
             data = json.loads(request.body)
             sender_account_number = data.get("senderAccountNumber")
             recipient_email = data.get("recipientEmail").lower()
+
             user = User.objects.get(email=recipient_email)
             recipient_account_number = user.account_number
-            phone_number = user.phone_number
+
+            user2 = User.objects.get(account_number = sender_account_number)
+
+            phone_number = user2.phone_number
             print(f"SOY PHONE_NUMBER --- >>> {phone_number}")
             amount = float(data.get("amount"))
 
@@ -247,7 +243,7 @@ def send_money(request):
                 return JsonResponse({"error": "Insufficient funds."}, status=400)
 
             # Trigger Vonage code validation
-            url = f"https://api.nexmo.com/verify/json?api_key={VONAGE_API_KEY}&api_secret={VONAGE_API_SECRET}&number=353852031759&brand=AcmeInc"
+            url = f"https://api.nexmo.com/verify/json?api_key={VONAGE_API_KEY}&api_secret={VONAGE_API_SECRET}&number={phone_number}&brand=AcmeInc"
             response = requests.get(url)
             verification_data = response.json()
 

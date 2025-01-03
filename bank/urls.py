@@ -1,5 +1,4 @@
 from django.urls import path
-#from django.conf.urls import handler404  # Import handler404
 from . import views
 
 
@@ -13,6 +12,3 @@ urlpatterns = [
     path('send-money', views.send_money, name='send_money'),
     path('validate-code/', views.validate_code, name='validate_code'),
 ]
-
-# Add a reference to the custom 404 view
-#handler404 = "bank.views.custom_404_view"

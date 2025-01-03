@@ -5,7 +5,7 @@ from datetime import timedelta
 
 # Custom User model
 class User(AbstractUser):
-    phone_number = models.CharField(max_length=10, unique=True, blank=True, null=True)
+    phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)
     address = models.TextField(null=True, blank=True)
     account_number = models.CharField(max_length=50, unique=True, null=True)
     state = models.CharField(max_length=50, default="active")

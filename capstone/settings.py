@@ -9,6 +9,13 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os 
+from dotenv import load_dotenv 
+# Load environment variables from .env file 
+load_dotenv() 
+# Access the environment variables 
+VONAGE_API_KEY = os.getenv('VONAGE_API_KEY') 
+VONAGE_API_SECRET = os.getenv('VONAGE_API_SECRET')
 
 from pathlib import Path
 
