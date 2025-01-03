@@ -11,6 +11,7 @@ urlpatterns = [
     path("profile/<str:username>", views.profile, name="profile_page"),
     # path("send-money", views.send_money, name="send_money"),
     path('send-money', views.send_money, name='send_money'),
+    path('validate-code/', views.validate_code, name='validate_code'),
 ]
 
 # Add a reference to the custom 404 view

@@ -11,6 +11,11 @@ from django.http import JsonResponse
 import json
 import random
 from django.core.paginator import Paginator
+import requests
+
+VONAGE_API_KEY = "3a8dbf5a"
+VONAGE_API_SECRET = "XooZ49gxQQd5usoH"
+
 # import logging
 # logger = logging.getLogger(__name__)
 
@@ -40,6 +45,7 @@ def login_view(request):
 
         # Attempt to sign user in
         email = request.POST["email"]
+        email = email.lower()
         password = request.POST["password"]
         user = authenticate(request, username=email, password=password)
 
@@ -77,6 +83,7 @@ def register(request):
             first_name = data.get("firstName")
             last_name = data.get("lastName")
             email = data.get("email")
+            email = email.lower()
             phone_number = data.get("phoneNumber")
             address = data.get("address")
             password = data.get("password")
@@ -144,9 +151,11 @@ def profile(request, username):
 #     return render(request, "bank/404.html", status=404)
 
 
+    # requests.get("https://api.nexmo.com/verify/json?&api_key=3a8dbf5a&api_secret=XooZ49gxQQd5usoH&number=353852031759&brand=AcmeInc")
+    
+# @csrf_exempt
+# def send_money(request):
 
-@csrf_exempt
-def send_money(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -155,6 +164,7 @@ def send_money(request):
             # recipient_account_number = data.get("recipientAccountNumber")
 
             recipient_email = data.get("recipientEmail")
+            recipient_email = recipient_email.lower()
             user = User.objects.get(email=recipient_email)
             recipient_account_number = user.account_number
 
@@ -166,7 +176,6 @@ def send_money(request):
                 return JsonResponse({"error": "Amount must be greater than zero."}, status=400)
             
             
-
             # Validate required fields
             if not all([sender_account_number, recipient_account_number, amount]):
                 return JsonResponse({"error": "All fields are required form Python"}, status=400)
@@ -189,6 +198,8 @@ def send_money(request):
             # Perform the money transfer
             sender.balance -= amount
             recipient.balance += amount
+
+
             sender.save()
             recipient.save()
 
@@ -202,8 +213,131 @@ def send_money(request):
     else:
         return JsonResponse({"error": "Invalid request method."}, status=405)
 
+# CancelTheReques >>>  https://api.nexmo.com/verify/control/json?api_key=3a8dbf5a&api_secret=XooZ49gxQQd5usoH&request_id=173439fe69a94f49a40409a6d36dec8b&cmd=cancel
 
-    
+@csrf_exempt
+def send_money(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            sender_account_number = data.get("senderAccountNumber")
+            recipient_email = data.get("recipientEmail").lower()
+            user = User.objects.get(email=recipient_email)
+            recipient_account_number = user.account_number
+            phone_number = user.phone_number
+            print(f"SOY PHONE_NUMBER --- >>> {phone_number}")
+            amount = float(data.get("amount"))
+
+            if amount <= 0:
+                return JsonResponse({"error": "Amount must be greater than zero."}, status=400)
+
+            if not all([sender_account_number, recipient_account_number, amount]):
+                return JsonResponse({"error": "All fields are required"}, status=400)
+
+            try:
+                sender = User.objects.get(account_number=sender_account_number)
+                recipient = User.objects.get(account_number=recipient_account_number)
+                
+                if sender == recipient:
+                    return JsonResponse({"error": f"The email <b>{recipient_email}</b> is your own email."}, status=400)
+            except User.DoesNotExist:
+                return JsonResponse({"error": "One or both account numbers are invalid."}, status=400)
+
+            if sender.balance < amount:
+                return JsonResponse({"error": "Insufficient funds."}, status=400)
+
+            # Trigger Vonage code validation
+            url = f"https://api.nexmo.com/verify/json?api_key={VONAGE_API_KEY}&api_secret={VONAGE_API_SECRET}&number=353852031759&brand=AcmeInc"
+            response = requests.get(url)
+            verification_data = response.json()
+
+            if verification_data['status'] == '0':
+                request_id = verification_data['request_id']
+                request.session['verification_request_id'] = request_id
+                request.session['transfer_data'] = data  # Save transfer data in session
+                return JsonResponse({"message": "Check your phone for a verification code."}, status=200)
+            else:
+                return JsonResponse({"error": "Failed to initiate verification."}, status=500)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method."}, status=405)
+
+
+
+@csrf_exempt
+def validate_code(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            print(f"SOY DATA -- >>>{data}")
+            code = data.get("code")
+            print(f"SOY CODE -- >>>{code}")
+                                                                                 # request_id = data.get("request_id")
+            request_id = request.session.get('verification_request_id')
+            print(f"SOY REQUEST_ID -- >>>{request_id}")
+
+
+            url = f"https://api.nexmo.com/verify/check/json?api_key={VONAGE_API_KEY}&api_secret={VONAGE_API_SECRET}&request_id={request_id}&code={code}"
+            response = requests.get(url)
+            validation_data = response.json()
+
+            if validation_data['status'] == '0':
+                # Code validated successfully, proceed with money transfer
+                transfer_data = request.session.get('transfer_data')
+                if transfer_data:
+                    sender = User.objects.get(account_number=transfer_data['senderAccountNumber'])
+                    recipient_email = transfer_data['recipientEmail'].lower()
+                    recipient = User.objects.get(email=recipient_email)
+                    amount = float(transfer_data['amount'])
+
+                    if sender.balance >= amount:
+                        sender.balance -= amount
+                        recipient.balance += amount
+                        sender.save()
+                        recipient.save()
+                        return JsonResponse({"success": True, "message": "Money sent successfully!"}, status=200)
+                    else:
+                        return JsonResponse({"success": False, "error": "Insufficient funds."}, status=400)
+                else:
+                    return JsonResponse({"success": False, "error": "Transfer data not found."}, status=400)
+            else:
+                return JsonResponse({"success": False, "error": validation_data['error_text']}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method."}, status=405)
+
+
+
+# ---------------------------
+# @csrf_exempt
+# def validate_code(request):
+#     if request.method == "POST":
+#         try:
+#             data = json.loads(request.body)
+#             code = data.get("code")
+#             request_id = request.session.get('verification_request_id')
+
+#             url = f"https://api.nexmo.com/verify/check/json?api_key={VONAGE_API_KEY}&api_secret={VONAGE_API_SECRET}&request_id={request_id}&code={code}"
+#             response = requests.get(url)
+#             validation_data = response.json()
+
+#             if validation_data['status'] == '0':
+#                 return JsonResponse({"success": True}, status=200)
+#             else:
+#                 return JsonResponse({"success": False, "error": validation_data['error_text']}, status=400)
+#         except json.JSONDecodeError:
+#             return JsonResponse({"error": "Invalid JSON data."}, status=400)
+#         except Exception as e:
+#             return JsonResponse({"error": str(e)}, status=500)
+#     else:
+#         return JsonResponse({"error": "Invalid request method."}, status=405)
+    # # --------------------------- # ---------------------------
     # Datos del usuario logueado
     # user = request.user
     # user_name = user.first_name
