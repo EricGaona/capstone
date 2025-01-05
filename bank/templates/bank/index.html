@@ -34,14 +34,15 @@
     <div id="validateMessage" class="mt-5 mb-5"></div>
     <hr class="mt-5 mb-5" />
     {% else %} 
+    <div style="margin-bottom: 200px;">
     <h4>Welcome to CSB</h4>
     <p>CSB is a bank that provides a platform for you to manage your account.</p>  
     <p>Register to create an account or login to access your account.</p>
     <p>Click <a href="{% url 'register' %}">here</a> to register or <a href="{% url 'login' %}">here</a> to login.</p>
-    
+    </div>
     
 {% endif %}
 {% endblock %}
 {% block script %}
-<script src="{% static 'bank/sendMoney.js' %}"></script>
+<script src="{% static 'bank/js/sendMoney.js' %}"></script>
 {% endblock %}

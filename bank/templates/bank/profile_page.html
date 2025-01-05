@@ -3,5 +3,62 @@
 {% block title %}Profile{%endblock%} 
 {% block body %}
 
-<h4>Hello <b>{{ user_name }}</b>. This is your profile page.</h4>
+{% block script %}
+<script>
+    console.log("pppppppp")
+document.addEventListener("DOMContentLoaded", () => {
+  const carouselElement = document.querySelector('#carouselExampleControls');
+  const carousel = new bootstrap.Carousel(carouselElement, {
+    interval: 5000,  // Auto-slide every 2 seconds
+    ride: 'carousel' // Automatically start the carousel when the page loads
+  });
+
+  // You can also manually control the carousel
+  document.querySelector('.carousel-control-prev').addEventListener('click', function () {
+    carousel.prev();  // Go to the previous item
+  });
+
+  document.querySelector('.carousel-control-next').addEventListener('click', function () {
+    carousel.next();  // Go to the next item
+  });
+});
+
+
+</script>
 {% endblock %}
+
+<!-- <h4>Hello <b>{{ user_name }}</b>. This is your profile page.</h4> -->
+<div id="carouselExampleControls" class="carousel slide mt-5" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active"> 
+        <img src="{% static 'bank/images/test1.jpg' %}" class="d-block w-100" alt="...">
+        <div class="carousel-caption d-none d-md-block">
+            <h3 ><span class="text-light bg-primary p-2">CSB Bank</span></h3>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'bank/images/test2.jpg' %}" class="d-block w-100" alt="...">
+        <div class="carousel-caption d-none d-md-block">
+            <h3 ><span class="text-light bg-primary p-2">Send money</span></h3>
+          </div>
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'bank/images/test3.jpg' %}" class="d-block w-100" alt="...">
+        <div class="carousel-caption d-none d-md-block">
+            <h3 ><span class="text-light bg-primary p-2">Get a loan</span></h3>
+          </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon text-dark bg-dark" aria-hidden="true"></span>
+      
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+      <span class="carousel-control-next-icon text-dark bg-dark" aria-hidden="true"></span>
+     
+    </button>
+  </div>
+{% endblock %}
+
+
+
