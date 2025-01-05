@@ -35,6 +35,9 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container">
         <a class="navbar-brand" href="{% url 'index' %}">CSB</a>
+        {% if user.is_authenticated %}
+        <span class="nav-link">Welcome <strong>{{ user.first_name|capfirst }}</strong></span>
+        {% endif %}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -43,17 +46,17 @@
           <div class="d-flex">
             <ul class="navbar-nav">
               {% if user.is_authenticated %}
+                  <!-- <li class="nav-item">
+                    <span class="nav-link">Welcome <strong>{{ user.first_name|capfirst }}</strong></span>
+                  </li>  -->
                   <li class="nav-item">
-                      <a class="nav-link" href="{% url 'profile_page' user.username %}"><strong>{{ user.first_name }}</strong></a>
-                  </li> 
-                  <li class="nav-item">
-                  <a class="nav-link" href="#">Contact</a>
+                    <a class="nav-link" href="{% url 'profile_page' user.username %}">Profile</a>
                   </li>
                   <li class="nav-item">
-                      <a class="nav-link" href="#">Following</a>
+                    <a class="nav-link" href="{% url 'loan' user.username %}">Loan</a>
                   </li>
                   <li class="nav-item">
-                      <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
                   </li>
               {% else %}
                 <li class="nav-item">

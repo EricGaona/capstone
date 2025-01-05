@@ -5,7 +5,7 @@
 <img src="{% static 'bank/images/autumn-1.jpg' %}" alt="bank" class="img-fluid">
 {% if user.is_authenticated %}
     
-    <h4 class="bg-primary mt-5 mb-5">Hello, <b>{{ user_name }}</b>. Yor account number is <b>{{ account_number }}</b></h4>
+    <h4 class="bg-primary mt-5 mb-5">Hello, <b>{{ user_name|capfirst }}</b>. Your account number is <b>{{ account_number }}</b></h4>
     <hr class="mb-5" />
     <h4 class="mb-3">Send Money</h4>
 
@@ -31,7 +31,7 @@
         <input type="text" id="code" name="code" placeholder="Enter Code"> 
         <button type="submit">Validate Code</button> 
     </form>
-
+    <div id="validateMessage" class="mt-5 mb-5"></div>
     <hr class="mt-5 mb-5" />
     {% else %} 
     <h4>Welcome to CSB</h4>

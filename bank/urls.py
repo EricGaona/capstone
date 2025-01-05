@@ -11,4 +11,5 @@ urlpatterns = [
     # path("send-money", views.send_money, name="send_money"),
     path('send-money', views.send_money, name='send_money'),
     path('validate-code/', views.validate_code, name='validate_code'),
+    path('loan/<str:username>', views.loan, name='loan'),
 ]
