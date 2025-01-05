@@ -2,12 +2,41 @@
 {% load static %}
 {% block title %}Index{%endblock%} 
 {% block body %}
-<img src="{% static 'bank/images/autumn-1.jpg' %}" alt="bank" class="img-fluid">
+<div id="carouselExampleControls" class="carousel slide mt-5 controlImages" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active"> 
+        <img src="{% static 'bank/images/test1.jpg' %}" class="d-block w-100" alt="...">
+        <div class="carousel-caption d-none d-md-block">
+            <h3 ><span class="text-light bg-primary p-2">CSB Bank</span></h3>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'bank/images/test2.jpg' %}" class="d-block w-100" alt="...">
+        <div class="carousel-caption d-none d-md-block">
+            <h3 ><span class="text-light bg-primary p-2">Send money</span></h3>
+          </div>
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'bank/images/test3.jpg' %}" class="d-block w-100" alt="...">
+        <div class="carousel-caption d-none d-md-block">
+            <h3 ><span class="text-light bg-primary p-2">Get a loan</span></h3>
+          </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon text-dark bg-dark" aria-hidden="true"></span>
+      
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+      <span class="carousel-control-next-icon text-dark bg-dark" aria-hidden="true"></span>
+     
+    </button>
+</div> 
 {% if user.is_authenticated %}
     
-    <h4 class="bg-primary mt-5 mb-5">Hello, <b>{{ user_name|capfirst }}</b>. Your account number is <b>{{ account_number }}</b></h4>
-    <hr class="mb-5" />
-    <h4 class="mb-3">Send Money</h4>
+    <!-- <h4 class="bg-primary mt-5 mb-5">Hello, <b>{{ user_name|capfirst }}</b>. Your account number is <b>{{ account_number }}</b></h4>-->
+    <hr class="mb-5" /> 
+ <h2 class="mb-3 text-primary">Send Money</h2>
 
     <form id="sendMoneyForm" action="{% url 'send_money' %}" method="post">
         {% csrf_token %}
@@ -32,17 +61,20 @@
         <button type="submit">Validate Code</button> 
     </form>
     <div id="validateMessage" class="mt-5 mb-5"></div>
-    <hr class="mt-5 mb-5" />
+    <hr class="mt-5 mb-5" /> 
+   
     {% else %} 
     <div style="margin-bottom: 200px;">
-    <h4>Welcome to CSB</h4>
-    <p>CSB is a bank that provides a platform for you to manage your account.</p>  
-    <p>Register to create an account or login to access your account.</p>
-    <p>Click <a href="{% url 'register' %}">here</a> to register or <a href="{% url 'login' %}">here</a> to login.</p>
+        <h2 class="mb-3 text-primary">Welcome to CSB</h2>
+       
+        <p>CSB is a bank that provides a platform for you to manage your account.</p>  
+        <p>Register to create an account or login to access your account.</p>
+        <p>Click <a href="{% url 'register' %}">here</a> to register or <a href="{% url 'login' %}">here</a> to login.</p>
     </div>
     
 {% endif %}
 {% endblock %}
 {% block script %}
 <script src="{% static 'bank/js/sendMoney.js' %}"></script>
+<script src="{% static 'bank/js/carousel.js' %}"></script>
 {% endblock %}

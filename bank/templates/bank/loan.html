@@ -4,4 +4,18 @@
 {% block body %}
 
 <h4 mt-5>Hello <b>{{ user_name }}</b>. This is your Loan page.</h4>
+
+<div class="container mt-5 controlImages">
+    <div class="row">
+      <div class="col-12 col-md-6 d-flex align-items-center justify-content-center">
+        <div class="text-center">
+          <h2>Fill out the form and apply for a loan.</h2>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <img src="{% static 'bank/images/loanIMG2.jpg' %}" alt="Placeholder Image" class="img-fluid">
+      </div>
+    </div>
+  </div>
 {% endblock %}

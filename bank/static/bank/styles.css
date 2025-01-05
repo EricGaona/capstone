@@ -1,0 +1,41 @@
+/* Make the html and body elements take the full height */
+html, body {
+    height: 100%; 
+    margin: 0;
+  }
+
+  .full-height{
+    min-height: 73vh; /* Full height of the body content */
+ 
+  }
+
+.controlImages{
+    max-width: 85%;
+    max-height: 85%;
+    margin: 20px auto;
+}
+
+/* Fixed footer for mobile devices (max-width 767px) */
+@media (max-width: 991px) {
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+    }
+  }
+
+  /* Footer styling for larger screens */
+  @media (min-width: 992px) {
+    footer {
+      position: relative;
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+  }
