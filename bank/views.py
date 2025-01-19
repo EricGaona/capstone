@@ -15,6 +15,8 @@ from django.core.paginator import Paginator
 import requests
 from dotenv import load_dotenv, dotenv_values
 
+from .models import Loan
+from django.utils.timezone import now
 
 VONAGE_API_KEY = os.getenv('VONAGE_API_KEY') 
 VONAGE_API_SECRET = os.getenv('VONAGE_API_SECRET')
@@ -131,7 +133,7 @@ def register(request):
     else:
         return render(request, "bank/register.html")
 
-# @login_required
+@login_required
 def profile(request, username):
     # user = User.objects.get(username=username)
     user = request.user
@@ -167,6 +169,8 @@ def send_money(request):
             phone_number = user_sender.phone_number
             print(f"SOY PHONE_NUMBER --- >>> {phone_number}")
             amount = float(data.get("amount"))
+            print(f"SOY amount --- >> {amount}")
+            print(type(amount))
 
             if amount <= 0:
                 return JsonResponse({"error": "Amount must be greater than zero."}, status=400)
@@ -233,7 +237,6 @@ def validate_code(request):
             status = validation_data['status']
             print(f"SOY status  --- >>> {status}")
 
-
             if validation_data['status'] == '0':
                 # Code validated successfully, proceed with money transfer
                 transfer_data = request.session.get('transfer_data')
@@ -275,20 +278,16 @@ def validate_code(request):
     else:
         return JsonResponse({"error": "Invalid request method."}, status=405)
 
-
-def loan(request, username):
-    # user = User.objects.get(username=username)
+@login_required
+def edit_profile(request):
     user = request.user
-    user_name = user.first_name
-    # posts = user.posts.all().order_by("-timestamp")
-    # is_following = request.user.is_authenticated and user.followers.filter(follower=request.user).exists()
-    # total_followers = user.followers.count()
-    # total_following = user.following.count()
+    if request.method == "POST":
+        first_name = request.POST.get('first_name')
+        print(first_name)
+        user.first_name = first_name
 
-    # paginator = Paginator(posts, 10)
-    # page_number = request.GET.get("page")
-    # list_posts = paginator.get_page(page_number)
+        user.save()
+        return  redirect(to='edit_profile')
 
-    return render(request, "bank/loan.html", {
-        "user_name": user_name,
-    })
+    else:
+        return render(request, "bank/profile_page_edit.html")
