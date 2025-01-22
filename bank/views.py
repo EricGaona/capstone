@@ -12,10 +12,10 @@ from django.http import JsonResponse
 import json
 import random
 from django.core.paginator import Paginator
-import requests
-from dotenv import load_dotenv, dotenv_values
 
-from .models import Loan
+
+
+
 from django.utils.timezone import now
 
 VONAGE_API_KEY = os.getenv('VONAGE_API_KEY') 
@@ -282,9 +282,17 @@ def validate_code(request):
 def edit_profile(request):
     user = request.user
     if request.method == "POST":
+
         first_name = request.POST.get('first_name')
-        print(first_name)
         user.first_name = first_name
+
+        last_name = request.POST.get('last_name')
+        user.last_name = last_name
+
+        address = request.POST.get('address')
+        user.address = address
+
+
 
         user.save()
         return  redirect(to='edit_profile')
