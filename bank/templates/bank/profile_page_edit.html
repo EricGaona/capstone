@@ -6,7 +6,7 @@
 {% block script %}
 
 {% endblock %}
-
+ <div class="fix-padding"> 
 <div class="container mt-5 controlImages">
     <div class="row">
       <div class="col-12 col-md-6">
@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <div> 
+ 
 
 <form method="POST" action="{% url 'edit_profile' %}" class="container">
     {% csrf_token %}
@@ -48,7 +48,7 @@
         <label for="email">Email</label>
         <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" >
     </div><br>
-    <button type="submit">Save</button>
+    <button class="btn btn-primary d-block text-cente btn-edit-save" type="submit">Save</button>
 </form>
 
   </div>

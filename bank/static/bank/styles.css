@@ -6,6 +6,7 @@ html, body {
 
   .full-height{
     min-height: 73vh; /* Full height of the body content */
+
  
   }
 
@@ -27,8 +28,16 @@ html, body {
   text-overflow: ellipsis;  Adds ellipsis for overflowing text 
   white-space: nowrap; Prevents text from wrapping */
 }
-
+.btn-edit-save{
+  min-width: 200px;
+  max-width: 200px;
+  margin: 0 auto;
+}
 /* Fixed footer for mobile devices (max-width 767px) */
+
+.fix-padding{
+  padding-bottom: 150px;
+}
 @media (max-width: 991px) {
     footer {
       position: fixed;
@@ -39,9 +48,7 @@ html, body {
       text-align: center;
       padding: 10px 0;
     }
-    #editProfileForm{
-        min-height: 85vh;
-    }
+ 
     .half-width{
       min-width: 100%; /* Adjust the value to set the desired minimum width */
     }
@@ -66,5 +73,8 @@ html, body {
 
     .half-width{
       min-width: 50%; /* Adjust the value to set the desired minimum width */
+    }
+    .fix-padding{
+      padding-bottom: 10px;
     }
   }

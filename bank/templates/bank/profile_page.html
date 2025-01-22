@@ -6,7 +6,7 @@
 {% block script %}
 
 {% endblock %}
-
+<div class="fix-padding">
 <div class="container mt-5 controlImages">
     <div class="row">
       <div class="col-12 col-md-6">
@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <div> 
+
 
 <form id="editProfileForm" class="container">
     {% csrf_token %}
@@ -60,7 +60,9 @@
     </div><br>
 </form>
 
-  </div>
+  <a class="btn btn-primary d-block text-cente btn-edit-save" href="{% url 'edit_profile' %}">Edit</a>
+
+</div>
 
 
 {% endblock %}
